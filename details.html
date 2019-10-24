@@ -1,0 +1,113 @@
+<html>
+<head>
+<title>Weather App</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
+.myLink {display: none}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 15px;
+}
+</style>
+<script src="plotly-latest.min.js"></script>
+</head>
+    
+<body>
+   <br>
+   <br>
+   <br>
+   <br>
+   <br>
+  <div class="w3-row-padding" >
+    <div class="w3-half w3-margin-bottom">
+        <div class="w3-container w3-white">
+            <table id="myTable" style="width:100%">
+                <tr>
+                    <th>Cidade</th>
+                    <th>Temperatura mínima</th>
+                    <th>Temperatura máxima</th>
+                </tr>
+            </table>
+            <br>
+            <button onclick="goBack()">Retroceder</button>
+        </div>
+    </div>
+    <div class="w3-half w3-margin-bottom">
+        <div class="w3-container w3-white" id="divG" style="height:50%;" >
+            
+        </div>   
+    </div>
+    </div>
+  <script>
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", "http://localhost:8080/details", false); // false for synchronous request
+    xmlHttp.send(null);
+    var selectedCities = JSON.parse(xmlHttp.responseText);
+    var city=0;
+    do{
+       xmlHttp.open("POST", "http://localhost:8080/city", true); // false for synchronous request
+       xmlHttp.onreadystatechange = function () {//Call a function when the state changes.
+        if (xmlHttp.readyState == 4 && http.status == 200) {
+          alert(xmlHttp.responseText);
+        }
+      }
+      xmlHttp.send(JSON.stringify({cityId:selectedCities.cities[city]}));
+      city++;
+    }while(city<selectedCities.number)
+    xmlHttp.open("GET", "http://localhost:8080/getDetails", false); // false for synchronous request
+    xmlHttp.send(null);
+    var done =JSON.parse(xmlHttp.responseText);
+    do{
+        xmlHttp.open("GET", "http://localhost:8080/getDetails", false); // false for synchronous request
+        xmlHttp.send(null);
+        var done =JSON.parse(xmlHttp.responseText);
+    }while (!done.state)
+        xmlHttp.open("GET", "http://localhost:8080/tableDetails", false); // false for synchronous request
+        xmlHttp.send(null);
+        var mapCityInfo = JSON.parse(xmlHttp.responseText);
+        var c;
+        var x=[];
+        var y=[];
+        for (c in mapCityInfo){
+            var table = document.getElementById("myTable");
+            var row = table.insertRow(-1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            x.push(mapCityInfo[c][2]);
+            y.push( mapCityInfo[c][0]);
+            cell1.innerHTML = mapCityInfo[c][2];
+            cell2.innerHTML = mapCityInfo[c][1];
+            cell3.innerHTML = mapCityInfo[c][0]; 
+            
+        }
+ 
+function goBack(){
+    window.location.replace("index.html");
+}   
+
+var dataG = [
+  {
+    x: x,
+    y: y,
+    type: 'bar'
+  }
+];
+
+Plotly.newPlot('divG', dataG);
+
+
+  </script>
+
+</body>
+
+</html>

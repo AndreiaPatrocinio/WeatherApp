@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Weather App</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
+.myLink {display: none}
+/* Style the navigation menu */
+#myMenu {
+  list-style-type: none; 
+  padding: 0;
+  margin: 0;
+}
+
+/* Style the navigation links */
+#myMenu li a {
+  padding: 12px;
+  text-decoration: none;
+  color: black;
+  display: block
+}
+/*Passar por cima*/
+#myMenu li a:hover {
+  background-color: #eee;
+}
+</style>
+
+<body>
+
+  <div class="w3-row-padding">
+    <div class="w3-third w3-margin-bottom">
+      <div class="w3-container w3-white">
+        <form action="details.html" method="post" id="myMenu" onsubmit="postCities()">
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", "http://localhost:8080/teste", false); // false for synchronous request
+    xmlHttp.send(null);
+
+    var cities = JSON.parse(xmlHttp.responseText);
+    if(cities.state=='citiesNotSelected'){
+        xmlHttp.open("GET", "http://localhost:8080/teste", false); // false for synchronous request
+        xmlHttp.send(null);
+
+    }
+    else{
+        for (var key in cities) {
+          if (cities.hasOwnProperty(key)) {
+            document.getElementById('myMenu').innerHTML += '<input name="checked" id="myCheck" type="checkbox" value="' + key + '"><label>' + cities[key] + '</label><br>';
+          }
+        }
+        document.getElementById('myMenu').innerHTML += '<br><input type="submit" value="Ver dados"></input>';
+    }
+
+    function postCities(){
+      var url = 'http://localhost:8080/postCities';
+      var params = getCities();
+      xmlHttp.open('POST', url, true);
+      //Send the proper header information along with the request
+      xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+      xmlHttp.onreadystatechange = function () {//Call a function when the state changes.
+        if (xmlHttp.readyState == 4 && http.status == 200) {
+          alert(xmlHttp.responseText);
+        }
+      }
+      xmlHttp.send(params);
+    }
+
+    function getCities(){
+      var chebox = document.getElementById('myMenu');
+      var options = chebox.getElementsByTagName('input');
+      var cities = [];
+      var count = 0;
+      
+      for (var i = 0; i < options.length; i++) {
+        if (options[i].checked) {
+          count++;
+          cities.push(options[i].value);
+        }
+      }
+      if(count >=3 && count <10 ){
+        return JSON.stringify({ number: count, cities: cities });
+      }
+      alert('Escolha entre 3 a 10 cidades!');
+      return JSON.stringify({ state: 'citiesNotSelected' });
+       
+    }
+
+
+  </script>
+
+</body>
+
+</html>

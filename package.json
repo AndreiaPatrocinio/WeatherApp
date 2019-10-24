@@ -1,0 +1,16 @@
+{
+    "name": "WeatherApp",
+    "version": "1.0.0",
+    "keywords": [
+        "util",
+        "functional",
+        "server",
+        "client",
+        "browser"
+    ],
+    "author": "ana",
+    "contributors": [],
+    "dependencies": {
+        "request": "^2.88.0"
+    }
+}
